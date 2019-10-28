@@ -1,0 +1,26 @@
+.fb-bg {
+    background: #4668bb;
+}
+
+
+.text_center{
+      text-align: center !important;
+}
+.text_white{
+  color:#fff !important;
+}
+.flex{
+  display: flex !important;
+}  
+.grey{
+    color:grey;
+  }
+  .circle{
+      display: block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #fff;
+    margin-left: auto;
+    margin-right: auto;
+}

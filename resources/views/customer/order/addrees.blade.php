@@ -56,6 +56,7 @@
 @push('custom_js')
 <script type="text/javascript">
 	    $(document).ready(function(){
+        // toast();
     $('#date').datepicker(
       {
        min: new Date(2018,10,27),
@@ -76,7 +77,11 @@
             },
           }
         });
+
+
   });
+      
+
         
 
   $('#DYL').on('click', function() {

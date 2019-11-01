@@ -21,7 +21,7 @@
                     7 Days a Week</h6>
               </div>
               <div class="mobileRepairEnquiryForm">
-                <form action="{{ route('customer.product-diagnose') }}" method="post">
+                <form action="{{ route('order.auth') }}" method="post">
                 {{csrf_field() }}
                     <div class="input-field col s12">
                      

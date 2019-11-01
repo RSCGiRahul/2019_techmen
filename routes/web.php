@@ -24,8 +24,7 @@ Route::post('account/verification/{token}', 'Auth\RegisterController@accountVeri
 Route::get('/customer/verify/{token}', 'CustomerController@verifyCustomer')->name('customer.verify');
 
 
-Route::get('/home', 'HomeController@index')->name('homes');
-Route::get('price', 'GuestController@price')->name('price');
+
 Route::get('homepage/{id}', 'GuestController@homepage')->name('homepage');
 
 Route::get('guest/product/{id}', 'GuestController@getProducts')->name('guest.product');
@@ -108,6 +107,12 @@ Route::post('/uploadcsv', 'Managment\AdminController@uploadProductCsv')->name('a
     })->name('admin.custom');
 });
 
+Route::get('/home', 'HomeController@index')->name('homes');
+Route::get('price', 'GuestController@price')->name('price');
+
+Route::post('order/auth', 'GuestController@orderAuth')->name('order.auth');
+
+
 Route::get('customer/register', 'CustomerRegistrationController@register');
 Route::post('registration', 'CustomerRegistrationController@registration')->name('customer.registration');
 
@@ -118,7 +123,7 @@ Route::get('contact-us', 'GuestController@contactUs')->name('contactus');
 
 
 Route::group(['prefix'=>'customer','as'=>'customer.'], function(){
-    Route::post('product-diagnose', 'Permit\OrderController@productDiagnose')->name('product-diagnose');
+    Route::any('product-diagnose', 'Permit\OrderController@productDiagnose')->name('product-diagnose');
     Route::post('place-order', 'Permit\OrderController@placeOrder')->name('place-order');
     // Route::post('', 'Permit\OrderController@productDiagnose')->name('product-diagnose');
     Route::resource('order', 'Permit\OrderController');

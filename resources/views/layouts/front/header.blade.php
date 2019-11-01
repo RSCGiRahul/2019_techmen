@@ -26,7 +26,8 @@
    if(Auth::check()){
      $name = Auth::user()->name;
    }else{
-    $name = Auth::user('customer')->name;
+    // dd(Auth::guard('customer'));
+    $name = Auth::guard('customer')->user()->name;
    }
  }
       ?>
@@ -37,7 +38,9 @@
         <li><a href="{{route('price')}}">View price</a></li>
             <li><a href="{{route('aboutus')}}">About Us</a></li>
             <li><a href="{{route('contactus')}}">Contact us</a></li>
-
+            @if(Auth::check()  || Auth::guard('customer')->check())
+             <li><a href="{{route('customer.order.index')}}">My Order</a></li>
+             @endif
 
             <!--Login Dropdown Trigger -->
 

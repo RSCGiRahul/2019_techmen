@@ -11,6 +11,7 @@ use App\Models\Address;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cookie;
 
 class CustomerRegistrationController extends Controller
 {
@@ -50,6 +51,10 @@ class CustomerRegistrationController extends Controller
        Address::create($addressData);
         DB::commit();
         if (Auth::guard('customer')->attempt(['phone' => $request->phone, 'password' => '123456'])) {
+            // dd(Cookie::get('order_sess'));
+           if(session()->has('product_id')) {
+                 return redirect()->route('customer.product-diagnose');
+            }
             return redirect()->intended('customer/order');
         }
         return redirect(route('welcome'))->withAlert('Register successfully, please verify your email.');

@@ -62,8 +62,12 @@
 
     @push('custom_js')
         <script type="text/javascript">
-           
+       
+function toast() {
+    Materialize.toast('Message recieved', 1000);  
+}   
 $(document).ready(function(){ 
+    toast();
         $("#validate_form").validate({
           rules: {
             // simple rule, converted to {required:true}

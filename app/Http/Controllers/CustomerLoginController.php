@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Region;
 use App\Models\Customer;
 use App\Models\Address;
-
+use Illuminate\Support\Facades\Cookie;
 class CustomerLoginController extends Controller
 {
 	 use AuthenticatesUsers;
@@ -30,20 +30,19 @@ class CustomerLoginController extends Controller
             // 'password' => 'required|string',
             // 'g-recaptcha-response' => 'required|captcha',
         ]);
-      // dd('dfl');
-
         // if ($this->hasTooManyLoginAttempts($request)) {
         //     $this->fireLockoutEvent($request);
         //     return $this->sendLockoutResponse($request);
         // }
 
         if (Auth::guard('customer')->attempt(['phone' => $request->phone, 'password' => '123456'])) {
-         // if (Auth::guard('customer')->attempt(['phone' => $request->phone])) {
-            // dd('insid this');
+            if(session()->has('product_id')) {
+                 return redirect()->route('customer.product-diagnose');
+            }
             return redirect()->intended('customer/order');
         }
         //$this->incrementLoginAttempts($request);
-        return redirect()->intended('/');
+        return redirect()->back();
         // $this->sendFailedLoginResponse($request);
     }
 

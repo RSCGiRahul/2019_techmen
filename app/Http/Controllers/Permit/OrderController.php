@@ -18,6 +18,8 @@ use Validator;
 use App\Http\Requests\OrderRequest;
 use Illuminate\Support\Facades\Cookie;
 use Exception;
+use Session;
+
 class OrderController extends Controller
 {
 
@@ -34,8 +36,9 @@ class OrderController extends Controller
     public function index()
     {
        $customer_id = Auth::user()->id;
-       $outputs = Order::with(['orderDetails','orderDiagnose', 'address','product'])->where('customer_id',$customer_id)->get();
-      // dd($outputs->toArray());
+       $outputs = Order::with(
+                    ['orderDetails','orderDiagnose', 'address','product'])
+                   ->where('customer_id',$customer_id)->orderBy('id', 'desc')->get();
        return view('customer.order.index',compact('outputs'));
     }
 
@@ -68,28 +71,7 @@ class OrderController extends Controller
       $product = $request->product_id; 
       $diagnose = implode(',', $request->diagnose); 
       return view('customer.order.addrees', compact('product', 'diagnose'));
-       // dd($request->all());
-       //   DB::beginTransaction();
-       //      try{
-       //             // $address = Address::create([
-       //             //      'type' => 1,
-       //             //      'region_id' => 1,
-       //             //      'address' => $request->input('address', NULL),
-       //             //      'phone' => $request->input('phone', NULL),
-       //             // ]);
-       //             productDiagnose::create([
-       //                  'customer_id' => Auth::user('customer')->id,
-       //                  'product_id' => $request->input('product_id', NULL),
-       //                  'diagnose_id' => $request->input('diagnose', NULL),
-       //                  'remark' => $request->input('remark','df'),
-       //                  'address_id' => $address->id,
-       //             ]);
-       //          DB::commit();
-       //          return redirect()->route('customer.order.index')->withAlert('Order Confirm.');
-       //      }catch (\Exception $e){
-       //          DB::rollBack();
-       //          return redirect()->back()->with('error', 'Error Found');
-       //      }
+      
     }
     /**
     https://stackoverflow.com/questions/45443085/how-to-redirect-to-a-post-route-in-laravel
@@ -104,8 +86,7 @@ class OrderController extends Controller
         // dd($request->all());
          DB::beginTransaction();
         try{
-$total_price = 0;
-// first entyr will goes into address
+        $total_price = 0;
         $address = Address::create([
             'customer_id' => Auth::user('customer')->id,
             'region_id' => Cookie::get('city'),
@@ -143,6 +124,7 @@ $total_price = 0;
              $order->save();
        }
             DB::commit();
+            session()->forget('product_id');
             return redirect(route('customer.order.index'))->withAlert('Order is placed.');
         }
         catch(Exception $e)
@@ -205,15 +187,19 @@ $total_price = 0;
      */
     public function productDiagnose(Request $request)
     {
-        // // dd($request);
-        //  Diagnose::with(['diagnoseLevelByParent'=> function ($q) use ($catid, $id){
-        //     if($catid){
-        //         $q->where('parent_id', $catid);
-        //     }
-        //     $q->whereDiagnoseId('id', $id);
-        $product = Product::findOrFail($request->product);
-        $diagnoses = ProductDiagnose::with(['diagnose'])->whereProductId($request->product)->get();  
-        // dd($diagnoses);
+       if(session()->has('product_id')) {
+           $product_id = session('product_id');
+        }
+        else
+        {
+            $product_id = session::get('_old_input')['product'];
+        }
+        if(!$product_id)
+        {
+          return redirect()->route('price');
+        }
+        $product = Product::findOrFail($product_id);
+        $diagnoses = ProductDiagnose::with(['diagnose'])->whereProductId($product_id)->get(); 
         return view('customer.order.product-diagnose', compact('diagnoses', 'product'));
     }
 }

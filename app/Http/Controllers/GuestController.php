@@ -10,6 +10,7 @@ use App\Models\Region;
 use App\helpers\tableHelper;
 use Auth;
 use App\Http\Controllers\Auth\LoginController;
+use App\Models\OrderSession;
 class GuestController extends Controller
 {
   public function __construct(){
@@ -59,6 +60,7 @@ class GuestController extends Controller
 
   public function price(){
     // dd(Auth::check());
+   // dd(Auth::guard('customer')->user());
         $outputs = Brand::all();
         return view('guest.price',compact('outputs'));
   }
@@ -86,6 +88,23 @@ public function getProductDiagnose($id){
     foreach($returns as $output){
       echo "<option value = {$output['id']} >  {$output['name']} </option> ";
     }
+  }
 
-}
+  public function orderAuth(Request $request)
+  {
+    if(!Auth::user('customer')) {
+       // session('product_id', $request->input('product'));
+          session(['product_id' => $request->input('product')]);
+      // $minutes = 20;
+      // $cookie = tableHelper::makeOrderCookie();
+      // Cookie::queue(Cookie::make('order_sess', $cookie, $minutes));
+      // OrderSession::create([
+      //   'cookie' => $cookie,
+      //   'brand_id' => $request->input('brand', NULL),
+      //   'product_id' => $request->input('product', NULL),
+      // ]);
+    }
+    // dd($request->input());
+    return redirect()->route('customer.product-diagnose')->withInput($request->input());
+  }
 }
